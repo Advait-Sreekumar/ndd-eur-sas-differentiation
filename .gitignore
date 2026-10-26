@@ -1,0 +1,148 @@
+# Downloaded and derived tabular datasets
+*.csv
+*.tsv
+*.tsv.gz
+*.xlsx
+*.xls
+*.ods
+
+# Genomic variant, alignment, and reference files
+*.vcf
+*.vcf.*
+*.bcf
+*.bcf.*
+*.bam
+*.bam.*
+*.cram
+*.cram.*
+*.bed
+*.bim
+*.fam
+*.ped
+*.map
+*.tfam
+*.panel
+*related_individuals*.txt*
+*.fasta
+*.fas
+*.fa
+*.fastq
+*.fq
+*.gff
+*.gff3
+*.gtf
+*.tbi
+*.csi
+
+# Compressed downloads and dataset archives
+*.gz
+*.gzip
+*.bz2
+*.xz
+*.zip
+*.7z
+*.tar
+*.tgz
+
+# Other scientific data and serialized analysis artifacts
+*.parquet
+*.feather
+*.orc
+*.h5
+*.hdf5
+*.mat
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.sav
+*.fits
+*.fit
+*.nc
+*.arff
+
+# Downloaded documentation accompanying datasets
+*.pdf
+
+# Locally generated analysis outputs and snapshots
+/ml_results/
+/backup_4db_run/
+/population_af_summary.json
+
+# Local Python environments and bytecode
+/venv/
+/.venv/
+__pycache__/
+*.py[cod]
+
+
+# ── Python environment ──────────────────────────────────────────────
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+
+# ── Raw genomic data (large; download separately, see README) ───────
+1000 Genomes/
+1000 Genomes 2/
+zeneodo-trio/
+Platinum/
+DenovoDB/
+*.vcf
+*.vcf.gz
+*.tbi
+*.bed.gz
+*.ped
+*.panel
+*.tfam
+
+# ── Raw gene-database downloads (check each source's terms) ─────────
+SFARI-Gene_*.csv
+DDG2P.tsv
+sysndd_*.xlsx
+autdb_human_gene.csv
+NDD_GeneHub*.csv
+Full-Data.csv
+Full-LoF-Table-Data.csv
+Full-Missense-Table-Data.csv
+
+# ── Large generated tables (exceed GitHub's 100 MB limit) ───────────
+population_af_table.csv
+phase1a_feature_table.csv
+*.parquet
+denovo_db_variants.csv
+1000G_trio_features.csv
+1000G_trio_summary.csv
+
+# ── Backups and logs ────────────────────────────────────────────────
+backup_*/
+*.log
+*.bak
+
+# ── Manuscript drafts and internal working documents ────────────────
+*.docx
+manuscript*.html
+paper_figures.html
+senior_flowchart.html
+research_flowchart_v2.html
+technical_document.html
+architecture.html
+project_state_v2.md
+
+# ── One-off and abandoned scripts (not part of the pipeline) ────────
+apply_fix.py
+apply_fix2.py
+trio_extraction_1000G.py
+cross_population_ml.py
+
+# ── Editor and OS files ─────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ── Secrets ─────────────────────────────────────────────────────────
+.env
+*.key

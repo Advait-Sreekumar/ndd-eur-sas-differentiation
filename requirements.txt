@@ -1,0 +1,17 @@
+pandas>=2.0
+openpyxl>=3.
+
+# Core
+pandas>=2.0
+numpy
+scipy>=1.7          # binomtest / proportion_ci are used in gene_level_fst.py and make_figures.py
+scikit-learn
+xgboost
+openpyxl>=3.1       # SysNDD .xlsx tables
+mygene              # gene coordinates from MyGene.info (fetch_gene_coordinates.py)
+matplotlib          # make_figures.py
+
+# Optional
+pyarrow             # only for the optional .parquet copy written by feature_engineering.py
+
+# To record the exact versions you ran, use:  pip freeze > requirements-lock.txt
