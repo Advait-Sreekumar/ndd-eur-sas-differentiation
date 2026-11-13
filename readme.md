@@ -10,20 +10,24 @@ variant-processing code.
 > and 2 only, and use healthy reference individuals, not patients. Nothing here is a
 > clinical tool or evidence of clinical portability.
 
-## What the analysis found
+## What the analysis found (provisional)
+
+> **Correction.** An earlier version of this README presented a lower EUR–SAS
+> differentiation at NDD genes as a finding. The manuscript's own analysis (V8) shows
+> that difference appears only with the per-variant plug-in statistic and disappears with
+> the Hudson estimator and allele-frequency matching. This section now reflects that.
 
 | Question | Result (chromosomes 1 + 2) |
 |---|---|
-| Gene reference | 4,811 unique genes from five databases (1,455 in ≥3 sources) |
-| Variants analysed | 13,549,694 extracted; differentiation defined for 6,228,512 |
-| Variant-level difference | Mean differentiation in NDD-gene regions 4.5% below the non-NDD background (0.00970 vs 0.01016) |
-| Gene-level difference | 56.7% of 746 NDD genes fall below size-matched background windows (95% CI 53.1–60.3%; sign test p = 0.0003) |
-| Confidence tiers | No significant difference between tiers or between 3+ and single-database genes |
-| EUR→SAS frequency prediction | R² 0.9412–0.9420 in NDD and background regions alike (difference ≤ 0.001) |
+| Gene reference | 4,811 unique genes from five databases (1,455 in ≥3 sources; 431 in all five) |
+| Variants analysed | 13,549,694 extracted; plug-in differentiation defined for 6,228,512 |
+| Plug-in statistic (per-variant mean) | NDD-gene regions 4.5% below background (0.00970 vs 0.01016) — spectrum-sensitive, not evidence of an NDD effect |
+| Hudson estimator; MAF-matched | No difference in manuscript V8 (ratios 0.997 and 1.007 on the earlier 4,589-gene reference); **to be recomputed on the 4,811-gene reference** with `recompute_v9_numbers.py` |
+| EUR→SAS frequency prediction | R² 0.9412–0.9420 in NDD and background regions alike (difference ≤ 0.0007 for EUR-only models) |
 
-Interpretation: lower differentiation in NDD-gene regions is *consistent with* stronger
-evolutionary constraint, but the comparison does not show that the effect is specific to
-NDD biology (see Limitations) and does not identify purifying selection as the cause.
+Interpretation: no robust difference in EUR–SAS differentiation between NDD-gene regions
+and the background is established. Do not describe the plug-in result as evidence of
+stronger constraint. Not shown: any clinical or pathogenicity portability.
 
 ## Repository contents
 
@@ -35,12 +39,13 @@ NDD biology (see Limitations) and does not identify purifying selection as the c
 | `fetch_gene_coordinates.py` | hg19 coordinates from MyGene.info → `ndd_genes_grch37.bed` |
 | `denovo_db_loader.py` | DenovoDB parsing → per-gene de novo counts |
 | `population_af_analysis.py` | **Main analysis**: EUR–SAS differentiation per variant, subset comparison, chr1→chr2 prediction models |
-| `gene_level_fst.py` | Gene-level comparison against size-matched background windows |
+| `gene_level_fst.py` | **Superseded.** Gene-level windows using the plug-in statistic (spectrum-sensitive); do not use for inference |
+| `recompute_v9_numbers.py` | Hudson and plug-in Table 1 values, MAF-matched ratios, per-chromosome ratios and checks from `population_af_table.csv` |
 | `check_genehub.py`, `check_af_table.py` | Input and output sanity checks |
 | `feature_engineering.py` | Trio feature table (quality filtering, Mendelian status, NDD annotation) |
 | `ml_baseline.py`, `ablation_model_b.py` | Trio classifiers and feature-set ablation |
 | `compute_training_metrics.py` | Train vs test metrics for the models |
-| `make_figures.py` | Figures 2–4 (300 DPI PNG and TIFF) |
+| `make_figures.py` | **Superseded.** Draws plug-in-based results that the manuscript no longer supports; regenerate figures from the Hudson-based analysis |
 
 ## Data (not included)
 
@@ -85,7 +90,8 @@ python3 denovo_db_loader.py                   # -> denovo_db_gene_counts.csv
 # 2. Population analysis (about 20 minutes, mostly random-forest training)
 python3 population_af_analysis.py             # -> population_af_table.csv, *_summary.json, ml_results/
 python3 check_af_table.py                     # coverage and restricted-prediction checks
-python3 gene_level_fst.py                     # -> gene_level_fst.csv
+python3 recompute_v9_numbers.py               # Hudson / MAF-matched values and checks
+# python3 gene_level_fst.py                   # superseded (plug-in based); not for inference
 
 # 3. Trio validation (secondary)
 python3 feature_engineering.py --full         # see warning below
@@ -94,7 +100,7 @@ python3 ablation_model_b.py
 python3 compute_training_metrics.py
 
 # 4. Figures
-python3 make_figures.py                       # -> figures/
+# python3 make_figures.py                     # superseded; regenerate figures after the rerun
 ```
 
 **Warning.** `feature_engineering.py` without `--full` is a test run on the first 50,000
@@ -128,9 +134,9 @@ If the gene reference changes (any database update), rerun everything from step 
 - **NDD gene set.** The union of five databases. NDD GeneHub membership means at least
   one reported case. Six genes that SysNDD classes as Refuted (three with no other
   support) are retained.
-- **Gene-level test.** Each gene's mean D is ranked within 1,000 random contiguous
-  background windows with the same number of variants on the same chromosome.
-  Windows match gene size only.
+- **Hudson estimator.** Per variant, numerator (p_EUR − p_SAS)² − p_EUR(1 − p_EUR)/(n1 − 1) − p_SAS(1 − p_SAS)/(n2 − 1),
+  denominator p_EUR(1 − p_SAS) + p_SAS(1 − p_EUR), summed over variants (n1 = 1006, n2 = 978 haplotypes).
+  Gene-level, gene-matched and LOEUF analyses are in the manuscript package, not this repository.
 - **Prediction models.** Ridge, Random Forest and XGBoost predict SAS frequency from EUR
   frequency (alone, or with other populations and gene annotations). Trained on
   chromosome 1, tested on chromosome 2.
@@ -142,11 +148,13 @@ If the gene reference changes (any database update), rerun everything from step 
   individuals, not NDD cohorts.
 - Predicting allele frequency is not variant interpretation. Pathogenicity and phenotype
   portability are not tested.
-- The background is mostly non-NDD genic and intergenic sequence. NDD genes may differ
-  from it because genes are generally more constrained, so the result does not show NDD
-  specificity. A comparison with size-matched non-NDD genes has not been done.
+- The all-variant background is mostly non-NDD genic and intergenic sequence, so a
+  difference from it would not show NDD specificity. The manuscript adds gene-matched
+  non-NDD controls, but they are only approximately matched on gene length.
 - Variant-level p-values treat linked variants as independent and are descriptive only.
-- The association does not identify purifying selection as the cause.
+- The manuscript's Hudson, matching, gene-level and constraint analyses have not yet been
+  rerun on the 4,811-gene reference; values from the 4,589-gene reference are provisional.
+- No result here identifies purifying selection as a cause.
 - The CEPH 1463 trio is a pipeline check: its 18,423 de novo candidates are
   artifact-dominated, and its classifiers are not a biological result.
 
