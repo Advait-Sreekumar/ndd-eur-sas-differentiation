@@ -146,3 +146,8 @@ Thumbs.db
 # ── Secrets ─────────────────────────────────────────────────────────
 .env
 *.key
+
+# Local V9 scripts and downloaded gnomAD metrics
+/build_report_V9.py
+/build_supp_V9.py
+/gnomad.v2.1.1.lof_metrics.by_gene.txt
